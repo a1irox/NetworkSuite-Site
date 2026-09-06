@@ -3,7 +3,6 @@
 <meta content="width=device-width, initial-scale=1.0" name="viewport">
 <title>Network Priority Manager - مدیریت اولویت شبکه ویندوز</title>
 <!-- Explicit Material Symbols Outlined stylesheet -->
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;family=JetBrains+Mono:wght@400;500;600;700&amp;family=Vazirmatn:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet">
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <style>
@@ -19,23 +18,6 @@
     }
     html[dir="ltr"] * {
       font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    }
-    .material-symbols-outlined, html[dir="rtl"] .material-symbols-outlined, html[dir="ltr"] .material-symbols-outlined {
-      font-family: 'Material Symbols Outlined' !important;
-      font-weight: normal;
-      font-style: normal;
-      font-size: 24px;
-      line-height: 1;
-      letter-spacing: normal;
-      text-transform: none;
-      display: inline-block;
-      white-space: nowrap;
-      word-wrap: normal;
-      direction: ltr;
-      -webkit-font-feature-settings: 'liga';
-      -webkit-font-smoothing: antialiased;
-      user-select: none;
-      vertical-align: middle;
     }
     .font-mono-code, html[dir="rtl"] .font-mono-code, html[dir="ltr"] .font-mono-code {
       font-family: 'JetBrains Mono', monospace !important;
@@ -59,6 +41,70 @@
     ::-webkit-scrollbar-thumb:hover {
       background: #38393f;
     }
+    /* Scrollytelling reveal system */
+    [data-reveal] {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.8s cubic-bezier(0.16, 0.8, 0.24, 1), transform 0.8s cubic-bezier(0.16, 0.8, 0.24, 1);
+      transition-delay: var(--reveal-delay, 0ms);
+      will-change: opacity, transform;
+    }
+    [data-reveal].is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    #scroll-progress {
+      transform-origin: 0 50%;
+      transform: scaleX(0);
+      transition: transform 0.1s linear;
+    }
+    #scroll-hint {
+      transition: background-color 0.3s ease;
+    }
+    @keyframes hint-bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(4px); }
+    }
+    #scroll-hint-arrow {
+      animation: hint-bounce 1.6s ease-in-out infinite;
+    }
+    #scroll-hint-arrow-wrap.is-up {
+      transform: rotate(180deg);
+    }
+    @media (prefers-reduced-motion: reduce) {
+      #scroll-hint-arrow {
+        animation: none;
+      }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      [data-reveal] {
+        opacity: 1 !important;
+        transform: none !important;
+        transition: none !important;
+      }
+      html {
+        scroll-behavior: auto;
+      }
+    }
+    /* Page-by-page scrollytelling: each main section snaps like a slide */
+    html {
+      scroll-snap-type: y mandatory;
+      scroll-padding-top: 72px;
+    }
+    .snap-section {
+      scroll-snap-align: start;
+      scroll-margin-top: 72px;
+      min-height: calc(100dvh - 72px);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    @media (max-width: 640px) {
+      .snap-section {
+        min-height: auto;
+        scroll-snap-align: start;
+      }
+    }
 </style>
 <script id="tailwind-config">
     tailwind.config = {
@@ -66,7 +112,7 @@
       theme: {
         extend: {
           "colors": {
-            "primary-container": "#10b981",
+            "primary-container": "#38bdf8",
             "tertiary-fixed": "#e1e0ff",
             "outline": "#86948a",
             "background": "#121318",
@@ -79,15 +125,15 @@
             "surface-container-lowest": "#0d0e13",
             "on-tertiary": "#1000a9",
             "on-surface-variant": "#bbcabf",
-            "primary": "#4edea3",
+            "primary": "#7cc9f0",
             "surface-container-high": "#292a2f",
-            "on-primary": "#003824",
+            "on-primary": "#04202e",
             "tertiary-container": "#9699ff",
             "error-container": "#93000a",
             "outline-variant": "#3c4a42",
             "secondary-container": "#0566d9",
             "on-secondary-container": "#e6ecff",
-            "on-primary-container": "#00422b",
+            "on-primary-container": "#e0f4ff",
             "surface-container": "#1e1f25",
             "on-error": "#690005",
             "surface-dim": "#121318",
@@ -103,13 +149,13 @@
             "secondary-fixed-dim": "#adc6ff",
             "on-secondary-fixed": "#001a42",
             "tertiary-fixed-dim": "#c0c1ff",
-            "primary-fixed-dim": "#4edea3",
+            "primary-fixed-dim": "#7cc9f0",
             "on-tertiary-fixed": "#07006c",
             "surface": "#121318",
             "surface-container-low": "#1a1b21",
             "secondary-fixed": "#d8e2ff",
             "on-primary-fixed-variant": "#005236",
-            "surface-tint": "#4edea3"
+            "surface-tint": "#7cc9f0"
           },
           "borderRadius": {
             "DEFAULT": "0.25rem",
@@ -125,7 +171,7 @@
             "gutter-xl": "2rem",
             "gutter-xs": "0.25rem",
             "container-padding-mobile": "1.25rem",
-            "section-gap": "4.5rem",
+            "section-gap": "0rem",
             "gutter-sm": "0.5rem"
           },
           "fontFamily": {
@@ -146,50 +192,39 @@
     }
   </script>
 </head>
-<body class="bg-surface text-on-surface antialiased selection:bg-secondary selection:text-on-secondary min-h-screen overflow-y-auto overflow-x-hidden relative flex flex-col justify-between" id="top">
-<!-- Ambient Cyber Background Glows -->
+<body class="bg-surface text-on-surface antialiased selection:bg-primary/30 selection:text-on-surface min-h-screen overflow-y-auto overflow-x-hidden relative flex flex-col justify-between" id="top">
+<!-- Ambient Background Glow (single, restrained) -->
 <div class="pointer-events-none fixed inset-0 z-0 overflow-hidden">
-<div class="absolute -top-32 right-1/4 h-[550px] w-[550px] rounded-full bg-secondary/10 blur-[130px]"></div>
-<div class="absolute top-1/3 -left-36 h-[600px] w-[600px] rounded-full bg-primary/10 blur-[140px]"></div>
-<div class="absolute bottom-10 right-10 h-[450px] w-[450px] rounded-full bg-tertiary-container/10 blur-[130px]"></div>
+<div class="absolute -top-40 left-1/2 -translate-x-1/2 h-[600px] w-[900px] rounded-full bg-primary/[0.06] blur-[160px]"></div>
 </div>
 <!-- STICKY TOP NAVBAR -->
-<header class="sticky top-0 left-0 right-0 z-50 bg-surface/85 backdrop-blur-xl border-b border-surface-container-high/60 shadow-lg">
-<div class="h-20 max-w-[1240px] mx-auto px-container-padding-mobile lg:px-container-padding-desktop flex items-center justify-between gap-gutter-md">
+<header class="sticky top-0 left-0 right-0 z-50 bg-surface/90 backdrop-blur-xl border-b border-surface-container-high/60">
+<div id="scroll-progress" class="absolute bottom-0 left-0 h-[2px] w-full bg-primary"></div>
+<div class="h-[72px] max-w-[1080px] mx-auto px-container-padding-mobile lg:px-container-padding-desktop flex items-center justify-between gap-gutter-md">
 <!-- Logo & App Name -->
-<div class="flex items-center gap-gutter-md">
 <a class="flex items-center gap-gutter-sm group" href="#top">
-<div class="w-11 h-11 rounded-xl bg-surface-container-high border border-outline-variant/30 flex items-center justify-center text-secondary shadow-[0_0_20px_rgba(173,198,255,0.25)] group-hover:scale-105 group-hover:border-secondary/40 transition-all shrink-0">
-<span class="material-symbols-outlined text-[24px]">router</span>
+<div class="w-9 h-9 rounded-lg bg-surface-container-high flex items-center justify-center text-primary shrink-0">
+<svg class="w-[20px] h-[20px] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="16" r="1.2" fill="currentColor" stroke="none"/><path d="M6 12a6 6 0 0 1 12 0"/><path d="M3 8a10 10 0 0 1 18 0"/><rect x="3" y="16" width="18" height="5" rx="1.5"/></svg>
 </div>
-<div class="flex flex-col text-start">
-<span class="font-headline-sm text-[17px] font-bold text-on-surface tracking-tight group-hover:text-secondary transition-colors" data-i18n="brand-title">Network Priority Manager</span>
-<span class="font-label-mono-sm text-[12px] text-on-surface-variant font-medium" data-i18n="brand-subtitle">مدیریت اولویت شبکه ویندوز</span>
+<div class="flex flex-col text-start leading-tight">
+<span class="font-headline-sm text-[15px] font-bold text-on-surface tracking-tight" data-i18n="brand-title">Network Priority Manager</span>
+<span class="font-label-mono-sm text-[11px] text-on-surface-variant" data-i18n="brand-subtitle">مدیریت اولویت شبکه ویندوز</span>
 </div>
 </a>
-<!-- Desktop Navigation Links -->
-<nav class="hidden lg:flex items-center gap-gutter-sm rtl:mr-gutter-lg ltr:ml-gutter-lg">
-
-
-
-
-
-</nav>
-</div>
 <!-- Right Action Items -->
 <div class="flex items-center gap-gutter-sm">
 <!-- Language Switcher FA/EN -->
-<div class="flex items-center bg-surface-container-low border border-surface-container-high rounded-full p-1">
-<button class="px-2.5 py-0.5 rounded-full bg-surface-container text-secondary font-mono-code text-[11px] font-bold shadow-sm transition-all" id="nav-btn-fa" onclick="setLanguage('fa')" type="button">FA</button>
-<button class="px-2.5 py-0.5 rounded-full text-on-surface-variant hover:text-on-surface font-mono-code text-[11px] transition-all" id="nav-btn-en" onclick="setLanguage('en')" type="button">EN</button>
+<div class="flex items-center bg-surface-container-low rounded-full p-1">
+<button class="px-2.5 py-1 rounded-full bg-surface-container-high text-primary font-mono-code text-[11px] font-bold transition-all" id="nav-btn-fa" onclick="setLanguage('fa')" type="button">FA</button>
+<button class="px-2.5 py-1 rounded-full text-on-surface-variant hover:text-on-surface font-mono-code text-[11px] transition-all" id="nav-btn-en" onclick="setLanguage('en')" type="button">EN</button>
 </div>
 <!-- Telegram Icon Link -->
-<a aria-label="کانال تلگرام" class="w-10 h-10 rounded-xl bg-surface-container-low hover:bg-surface-container-high border border-outline-variant/30 text-on-surface-variant hover:text-secondary flex items-center justify-center transition-all shadow-sm" href="https://t.me/aliroxtg" rel="noopener noreferrer" target="_blank">
-<svg class="w-5 h-5 fill-current" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.75-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"></path></svg>
+<a aria-label="کانال تلگرام" class="w-9 h-9 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container-low flex items-center justify-center transition-all" href="https://t.me/aliroxtg" rel="noopener noreferrer" target="_blank">
+<svg class="w-[18px] h-[18px] fill-current" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.75-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"></path></svg>
 </a>
 <!-- Fast Download Header CTA -->
-<a class="hidden sm:inline-flex items-center gap-gutter-xs bg-secondary-container hover:bg-secondary text-on-secondary-container hover:text-on-secondary px-4 py-2 rounded-xl font-headline-sm text-[13px] font-bold transition-all shadow-[0_0_20px_rgba(5,102,217,0.35)] hover:shadow-[0_0_24px_rgba(173,198,255,0.4)]" href="https://github.com/a1irox/NetworkSuite" rel="noopener noreferrer" target="_blank">
-<span class="material-symbols-outlined text-[19px]">download</span>
+<a class="hidden sm:inline-flex items-center gap-gutter-xs bg-primary hover:brightness-110 text-on-primary px-4 py-2 rounded-lg font-headline-sm text-[13px] font-bold transition-all" href="https://github.com/a1irox/NetworkSuite" rel="noopener noreferrer" target="_blank">
+<svg class="w-[18px] h-[18px] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
 <span data-i18n="nav-btn-download" class="">دانلود نسخه ویندوز</span>
 </a>
 </div>
@@ -197,99 +232,91 @@
 </header>
 <!-- MAIN DOCUMENT FLOW -->
 <main class="relative z-10 w-full flex-1">
-<div class="max-w-[1240px] mx-auto px-container-padding-mobile lg:px-container-padding-desktop py-8 md:py-12 flex flex-col gap-16">
+<div class="max-w-[1080px] mx-auto px-container-padding-mobile lg:px-container-padding-desktop py-14 md:py-20 flex flex-col gap-section-gap">
 <!-- 1. HERO SECTION -->
-<section class="relative flex flex-col items-center text-center pt-2" id="hero">
+<section class="snap-section relative flex flex-col items-center text-center" id="hero">
 <!-- Badge Chip -->
-<div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-surface-container-high border border-outline-variant/40 text-secondary shadow-md hover:border-secondary/40 transition-colors">
-<span class="material-symbols-outlined text-[18px] text-primary">bolt</span>
-<span class="text-[13px] text-on-surface font-medium" data-i18n="hero-badge">ابزار سبک، متن‌باز و 100% رایگان برای ویندوز</span>
+<div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-surface-container-low text-on-surface-variant" data-reveal>
+<span class="w-1.5 h-1.5 rounded-full bg-primary shrink-0"></span>
+<span class="text-[13px] font-medium" data-i18n="hero-badge">ابزار سبک، متن‌باز و 100% رایگان برای ویندوز</span>
 </div>
 <!-- Main Headline -->
-<div class="mt-6 max-w-4xl flex flex-col items-center">
-<h1 class="text-[34px] sm:text-[44px] md:text-[52px] leading-[1.25] font-extrabold text-on-surface tracking-normal" data-i18n="hero-title">مدیریت هوشمند <span class="text-transparent bg-clip-text bg-gradient-to-r from-secondary via-primary to-tertiary">اولویت شبکه</span></h1>
-<p class="mt-4 text-[16px] md:text-[18px] text-on-surface-variant max-w-2xl leading-relaxed font-normal" data-i18n="hero-desc">تعیین کنید سیستم شما اول از کدام کارت شبکه (کابل اترنت LAN، شبکه وای‌فای یا آداپتورهای مجازی) استفاده کند؛ تنها با کشیدن و رها کردن (Drag &amp; Drop).</p>
-<div class="mt-3 flex items-center gap-2 text-on-surface-variant text-[13px] font-mono-code bg-surface-container-low/70 border border-outline-variant/30 px-3 py-1 rounded-full">
-<span class="material-symbols-outlined text-[16px] text-secondary">verified</span>
+<div class="mt-6 max-w-3xl flex flex-col items-center" data-reveal style="--reveal-delay:100ms">
+<h1 class="text-[32px] sm:text-[42px] md:text-[48px] leading-[1.3] font-extrabold text-on-surface tracking-normal" data-i18n="hero-title">مدیریت هوشمند <span class="text-primary">اولویت شبکه</span></h1>
+<p class="mt-5 text-[16px] md:text-[17px] text-on-surface-variant max-w-2xl leading-relaxed font-normal" data-i18n="hero-desc">تعیین کنید سیستم شما اول از کدام کارت شبکه (کابل اترنت LAN، شبکه وای‌فای یا آداپتورهای مجازی) استفاده کند؛ تنها با کشیدن و رها کردن (Drag &amp; Drop).</p>
+<div class="mt-4 flex items-center gap-2 text-on-surface-variant text-[12.5px] font-mono-code">
+<svg class="w-[15px] h-[15px] text-primary shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/><path d="m9 12 2 2 4-4"/></svg>
 <span data-i18n="hero-os-support" class="">پشتیبانی کامل از Windows 8 / 10 / 11 و Windows Server 2012 به بالا</span>
 </div>
 </div>
 <!-- Primary Action Download Button & Metadata -->
-<div class="mt-8 flex flex-col items-center gap-2 w-full max-w-md" id="download">
-<a class="w-full group relative flex items-center justify-between bg-gradient-to-r from-secondary-container via-blue-600 to-secondary-container hover:brightness-110 text-white px-6 py-3.5 rounded-2xl transition-all shadow-[0_0_28px_rgba(5,102,217,0.45)] hover:shadow-[0_0_36px_rgba(173,198,255,0.6)] transform hover:-translate-y-0.5 border border-secondary/30" href="https://github.com/a1irox/NetworkSuite" rel="noopener noreferrer" target="_blank">
+<div class="mt-9 flex flex-col items-center gap-2.5 w-full max-w-md" id="download" data-reveal style="--reveal-delay:200ms">
+<a class="w-full group relative flex items-center justify-between bg-primary hover:brightness-110 text-on-primary px-6 py-3.5 rounded-xl transition-all shadow-[0_0_32px_rgba(124,201,240,0.28)] hover:shadow-[0_0_40px_rgba(124,201,240,0.4)]" href="https://github.com/a1irox/NetworkSuite" rel="noopener noreferrer" target="_blank">
 <div class="flex items-center gap-3">
-<span class="material-symbols-outlined text-[28px] text-secondary shrink-0">desktop_windows</span>
+<svg class="w-[26px] h-[26px] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="13" x="3" y="4" rx="2"/><path d="M8 21h8"/><path d="M12 17v4"/></svg>
 <div class="flex flex-col text-start">
-<span class="text-[17px] font-bold text-white leading-snug" data-i18n="download-btn-title">دانلود مستقیم برای ویندوز</span>
-<span class="font-mono-code text-[11px] text-blue-100 opacity-90" data-i18n="download-btn-sub">نسخه رسمی v1.0.0</span>
+<span class="text-[16px] font-bold leading-snug" data-i18n="download-btn-title">دانلود مستقیم برای ویندوز</span>
+<span class="font-mono-code text-[11px] opacity-75" data-i18n="download-btn-sub">نسخه رسمی v1.0.0</span>
 </div>
 </div>
-<span class="material-symbols-outlined text-[22px] transition-transform rtl:group-hover:-translate-x-1 ltr:group-hover:translate-x-1 shrink-0 rtl:rotate-180">arrow_forward</span>
+<svg class="w-[20px] h-[20px] transition-transform rtl:group-hover:-translate-x-1 ltr:group-hover:translate-x-1 shrink-0 rtl:rotate-180 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
 </a>
-<span class="text-[12px] text-on-surface-variant/90 mt-1" data-i18n="download-caption">بدون نیاز به نصب (Portable) • بدون نیاز به پیش‌نیازهای سنگین سیستمی</span>
+<span class="text-[12px] text-on-surface-variant" data-i18n="download-caption">بدون نیاز به نصب (Portable) • بدون نیاز به پیش‌نیازهای سنگین سیستمی</span>
 </div>
 <!-- SmartScreen Notice Banner -->
-<div class="mt-6 max-w-2xl w-full bg-surface-container-high/60 border border-outline-variant/40 backdrop-blur-md rounded-2xl p-4 shadow-sm text-start flex items-start gap-3">
-<div class="w-9 h-9 rounded-xl bg-surface-container-highest flex items-center justify-center text-tertiary shrink-0 mt-0.5">
-<span class="material-symbols-outlined text-[20px]">info</span>
-</div>
+<div class="mt-8 max-w-2xl w-full bg-surface-container-low rounded-xl p-4 text-start flex items-start gap-3" data-reveal style="--reveal-delay:280ms">
+<svg class="w-[19px] h-[19px] text-on-surface-variant shrink-0 mt-0.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
 <div class="flex flex-col">
-<span class="text-[14px] text-on-surface font-bold" data-i18n="smartscreen-title">نکته اجرای اولیه در ویندوز (SmartScreen):</span>
-<p class="text-[12.5px] text-on-surface-variant leading-relaxed mt-1" data-i18n="smartscreen-desc">از آنجا که نرم‌افزار کاملاً رایگان و متن‌باز بوده و فاقد امضای دیجیتال تجاری شرکتی است، ممکن است پنجره اخطار اولیه ویندوز نمایش داده شود. در این صورت روی <span class="text-secondary font-semibold">More info</span> و سپس <span class="text-primary font-semibold">Run anyway</span> کلیک فرمایید.</p>
+<span class="text-[13.5px] text-on-surface font-bold" data-i18n="smartscreen-title">نکته اجرای اولیه در ویندوز (SmartScreen):</span>
+<p class="text-[12.5px] text-on-surface-variant leading-relaxed mt-1" data-i18n="smartscreen-desc">از آنجا که نرم‌افزار کاملاً رایگان و متن‌باز بوده و فاقد امضای دیجیتال تجاری شرکتی است، ممکن است پنجره اخطار اولیه ویندوز نمایش داده شود. در این صورت روی <span class="text-primary font-semibold">More info</span> و سپس <span class="text-primary font-semibold">Run anyway</span> کلیک فرمایید.</p>
 </div>
 </div>
 </section>
 <!-- 2. INTERACTIVE MOCKUP & HOW IT WORKS SECTION -->
-<section class="relative pt-2" id="preview">
-<div class="flex flex-col items-center text-center mb-8">
-<div class="inline-flex items-center gap-1.5 text-primary font-mono-code text-[12px] font-semibold bg-primary/10 border border-primary/20 px-3 py-0.5 rounded-full">
-<span class="material-symbols-outlined text-[16px]">tune</span>
-<span data-i18n="preview-badge" class="">INTERACTIVE PREVIEW</span>
-</div>
-<h2 class="mt-2 text-[26px] md:text-[32px] text-on-surface font-extrabold" data-i18n="preview-title">کنترل بی‌دردسر ترافیک شبکه در 3 گام</h2>
-<p class="mt-1 text-[14px] text-on-surface-variant max-w-xl" data-i18n="preview-subtitle">تنظیم دقیق Interface Metric کارت‌ها، بدون نیاز به دستکاری دستی دستورات خط‌فرمان route یا ویرایش پیچیده رجیستری</p>
+<section class="snap-section relative" id="preview">
+<div class="flex flex-col items-center text-center mb-10" data-reveal>
+<h2 class="text-[24px] md:text-[30px] text-on-surface font-extrabold" data-i18n="preview-title">کنترل بی‌دردسر ترافیک شبکه در 3 گام</h2>
+<p class="mt-2 text-[14px] text-on-surface-variant max-w-xl" data-i18n="preview-subtitle">تنظیم دقیق Interface Metric کارت‌ها، بدون نیاز به دستکاری دستی دستورات خط‌فرمان route یا ویرایش پیچیده رجیستری</p>
 </div>
 <!-- Grid Layout: App Mockup + Step Explanations -->
 <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
 <!-- Live Windows App Mockup Frame (7 Cols) -->
-<div class="lg:col-span-7 flex flex-col bg-surface-container-lowest border border-surface-container-highest rounded-2xl shadow-2xl overflow-hidden" dir="ltr">
+<div class="lg:col-span-7 flex flex-col bg-surface-container-lowest rounded-2xl overflow-hidden" dir="ltr" data-reveal>
 <!-- Window Header / Title Bar -->
-<div class="bg-surface-container-high px-4 py-2.5 flex items-center justify-between border-b border-surface-container-highest">
+<div class="bg-surface-container-high px-4 py-2.5 flex items-center justify-between">
 <div class="flex items-center gap-2">
-<span class="material-symbols-outlined text-[18px] text-secondary">alt_route</span>
+<svg class="w-[17px] h-[17px] text-on-surface-variant shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="7" r="2"/><circle cx="18" cy="17" r="2"/><path d="M6 9v2a4 4 0 0 0 4 4h6"/></svg>
 <span class="font-mono-code text-[12px] text-on-surface font-semibold tracking-wide">Network Priority Manager v1.2.0</span>
 </div>
 <!-- Windows Close / Minimize Buttons -->
 <div class="flex items-center gap-1.5">
-<span class="w-3 h-3 rounded-full bg-surface-variant hover:bg-surface-bright cursor-pointer inline-block"></span>
-<span class="w-3 h-3 rounded-full bg-surface-variant hover:bg-surface-bright cursor-pointer inline-block"></span>
-<span class="w-3 h-3 rounded-full bg-error/80 hover:bg-error cursor-pointer inline-block"></span>
+<span class="w-2.5 h-2.5 rounded-full bg-surface-variant inline-block"></span>
+<span class="w-2.5 h-2.5 rounded-full bg-surface-variant inline-block"></span>
+<span class="w-2.5 h-2.5 rounded-full bg-error/70 inline-block"></span>
 </div>
 </div>
 <!-- App Mockup Content Area -->
 <div class="p-4 md:p-5 flex flex-col gap-3.5 bg-surface-container-low flex-1 justify-between text-left">
 <div class="flex flex-col gap-3">
 <!-- Telemetry & Sub-bar -->
-<div class="flex items-center justify-between bg-surface-container rounded-xl px-3 py-2 border border-outline-variant/30">
+<div class="flex items-center justify-between bg-surface-container rounded-lg px-3 py-2">
 <div class="flex items-center gap-2 text-[12px] text-on-surface-variant font-mono-code">
-<span class="w-2.5 h-2.5 rounded-full bg-primary animate-pulse"></span>
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
 <span data-i18n="mockup-count" class="">تعداد کارت‌های شبکه شناسایی‌شده: 2 مورد</span>
 </div>
-<span class="font-mono-code text-[11px] text-secondary bg-secondary-container/20 border border-secondary/30 px-2 py-0.5 rounded-md font-medium" data-i18n="mockup-ipv4">IPv4 Routing Active</span>
+<span class="font-mono-code text-[11px] text-on-surface-variant" data-i18n="mockup-ipv4">IPv4 Routing Active</span>
 </div>
 <!-- Adapter Item 1 (Priority 1: Ethernet Connected) -->
-<div class="group flex items-center justify-between p-3 px-4 rounded-xl bg-surface-container-high border border-primary/30 transition-all shadow-sm">
+<div class="flex items-center justify-between p-3 px-4 rounded-lg bg-surface-container-high">
 <div class="flex items-center gap-3">
-<div class="flex items-center justify-center text-on-surface-variant cursor-grab hover:text-on-surface shrink-0">
-<span class="material-symbols-outlined text-[20px]">drag_indicator</span>
-</div>
-<div class="w-10 h-10 rounded-xl bg-primary-container/20 border border-primary/30 text-primary flex items-center justify-center shrink-0">
-<span class="material-symbols-outlined text-[22px]">settings_ethernet</span>
+<svg class="w-[18px] h-[18px] text-on-surface-variant/60 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="6" r="1.1" fill="currentColor" stroke="none"/><circle cx="15" cy="6" r="1.1" fill="currentColor" stroke="none"/><circle cx="9" cy="12" r="1.1" fill="currentColor" stroke="none"/><circle cx="15" cy="12" r="1.1" fill="currentColor" stroke="none"/><circle cx="9" cy="18" r="1.1" fill="currentColor" stroke="none"/><circle cx="15" cy="18" r="1.1" fill="currentColor" stroke="none"/></svg>
+<div class="w-9 h-9 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
+<svg class="w-[20px] h-[20px] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="9" width="16" height="7" rx="1"/><path d="M8 9V6"/><path d="M12 9V6"/><path d="M16 9V6"/></svg>
 </div>
 <div class="flex flex-col text-start">
 <div class="flex items-center gap-2 flex-wrap">
-<span class="text-[14px] text-on-surface font-bold font-mono-code">Ethernet 1 (Realtek PCIe GbE)</span>
-<span class="px-2 py-0.5 rounded text-[11px] font-mono-code bg-primary-container text-on-primary-container font-bold" data-i18n="mockup-priority-1">اولویت اول #1</span>
+<span class="text-[13.5px] text-on-surface font-bold font-mono-code">Ethernet 1 (Realtek PCIe GbE)</span>
+<span class="px-2 py-0.5 rounded text-[11px] font-mono-code bg-primary/15 text-primary font-bold" data-i18n="mockup-priority-1">اولویت اول #1</span>
 </div>
 </div>
 </div>
@@ -298,44 +325,42 @@
 <span class="text-primary font-bold" data-i18n="mockup-metric-1">متریک: 10</span>
 <span class="text-on-surface-variant text-[10px]" data-i18n="mockup-traffic-1">ترافیک اصلی</span>
 </div>
-<span class="w-2.5 h-2.5 rounded-full bg-primary shadow-[0_0_8px_rgba(78,222,163,0.9)]"></span>
+<span class="w-2 h-2 rounded-full bg-primary"></span>
 </div>
 </div>
 <!-- Adapter Item 2 (Priority 2: Wi-Fi Connected) -->
-<div class="group flex items-center justify-between p-3 px-4 rounded-xl bg-surface-container border border-outline-variant/30 hover:border-secondary/40 transition-all shadow-sm">
+<div class="flex items-center justify-between p-3 px-4 rounded-lg bg-surface-container">
 <div class="flex items-center gap-3">
-<div class="flex items-center justify-center text-on-surface-variant cursor-grab hover:text-on-surface shrink-0">
-<span class="material-symbols-outlined text-[20px]">drag_indicator</span>
-</div>
-<div class="w-10 h-10 rounded-xl bg-secondary-container/20 border border-secondary/30 text-secondary flex items-center justify-center shrink-0">
-<span class="material-symbols-outlined text-[22px]">wifi</span>
+<svg class="w-[18px] h-[18px] text-on-surface-variant/60 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="6" r="1.1" fill="currentColor" stroke="none"/><circle cx="15" cy="6" r="1.1" fill="currentColor" stroke="none"/><circle cx="9" cy="12" r="1.1" fill="currentColor" stroke="none"/><circle cx="15" cy="12" r="1.1" fill="currentColor" stroke="none"/><circle cx="9" cy="18" r="1.1" fill="currentColor" stroke="none"/><circle cx="15" cy="18" r="1.1" fill="currentColor" stroke="none"/></svg>
+<div class="w-9 h-9 rounded-lg bg-surface-container-highest text-on-surface-variant flex items-center justify-center shrink-0">
+<svg class="w-[20px] h-[20px] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><circle cx="12" cy="20" r="1" fill="currentColor" stroke="none"/></svg>
 </div>
 <div class="flex flex-col text-start">
 <div class="flex items-center gap-2 flex-wrap">
-<span class="text-[14px] text-on-surface font-bold font-mono-code">Wi-Fi 6 (Intel AX200 160MHz)</span>
-<span class="px-2 py-0.5 rounded text-[11px] font-mono-code bg-surface-container-highest text-on-surface font-medium" data-i18n="mockup-priority-2">اولویت دوم #2</span>
+<span class="text-[13.5px] text-on-surface font-bold font-mono-code">Wi-Fi 6 (Intel AX200 160MHz)</span>
+<span class="px-2 py-0.5 rounded text-[11px] font-mono-code bg-surface-container-highest text-on-surface-variant font-medium" data-i18n="mockup-priority-2">اولویت دوم #2</span>
 </div>
 </div>
 </div>
 <div class="flex items-center gap-3 shrink-0">
 <div class="flex flex-col text-end font-mono-code text-[11px]">
-<span class="text-secondary font-bold" data-i18n="mockup-metric-2">متریک: 25</span>
+<span class="text-on-surface font-bold" data-i18n="mockup-metric-2">متریک: 25</span>
 <span class="text-on-surface-variant text-[10px]" data-i18n="mockup-traffic-2">مسیر پشتیبان</span>
 </div>
-<span class="w-2.5 h-2.5 rounded-full bg-primary shadow-[0_0_8px_rgba(78,222,163,0.9)]"></span>
+<span class="w-2 h-2 rounded-full bg-primary"></span>
 </div>
 </div>
 </div>
 <!-- App Controls Footer Strip -->
-<div class="mt-2 bg-surface-container-lowest/60 border border-outline-variant/30 rounded-xl p-3 flex flex-col sm:flex-row items-center justify-between gap-3">
+<div class="mt-1 bg-surface-container-lowest/60 rounded-lg p-3 flex flex-col sm:flex-row items-center justify-between gap-3">
 <label class="flex items-center gap-2 cursor-pointer select-none">
-<input checked="" class="w-4 h-4 rounded text-secondary focus:ring-0 accent-secondary-container cursor-pointer" type="checkbox">
+<input checked="" class="w-4 h-4 rounded text-primary focus:ring-0 accent-primary cursor-pointer" type="checkbox">
 <span class="font-mono-code text-[12px] text-on-surface font-medium" data-i18n="mockup-persist">حفظ تنظیمات پس از راه‌اندازی (Persist)</span>
 </label>
 <div class="flex items-center gap-2 w-full sm:w-auto">
 <button class="flex-1 sm:flex-none px-3.5 py-1.5 rounded-lg bg-surface-container-highest hover:bg-surface-bright text-on-surface text-[13px] font-medium transition-all" data-i18n="mockup-btn-restore" type="button">بازگردانی</button>
-<button class="flex-1 sm:flex-none px-4 py-1.5 rounded-lg bg-primary hover:brightness-110 text-on-primary text-[13px] font-bold transition-all shadow-[0_0_14px_rgba(78,222,163,0.5)] flex items-center justify-center gap-1.5" type="button">
-<span class="material-symbols-outlined text-[17px]">check_circle</span>
+<button class="flex-1 sm:flex-none px-4 py-1.5 rounded-lg bg-primary hover:brightness-110 text-on-primary text-[13px] font-bold transition-all flex items-center justify-center gap-1.5" type="button">
+<svg class="w-[16px] h-[16px] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
 <span data-i18n="mockup-btn-apply" class="">اعمال اولویت‌ها</span>
 </button>
 </div>
@@ -345,32 +370,26 @@
 <!-- 3 Step Cards Beside Mockup (5 Cols) -->
 <div class="lg:col-span-5 flex flex-col justify-between gap-4">
 <!-- Step 1 -->
-<div class="p-5 rounded-2xl bg-surface-container-low border border-surface-container-highest hover:border-secondary/40 transition-all shadow-md flex items-start gap-3.5">
-<div class="w-9 h-9 rounded-xl bg-secondary-container text-on-secondary-container flex items-center justify-center font-mono-code text-[16px] font-bold shrink-0 shadow-sm">
-                1
-              </div>
+<div class="p-5 rounded-xl bg-surface-container-low flex items-start gap-3.5" data-reveal>
+<div class="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center font-mono-code text-[14px] font-bold shrink-0">1</div>
 <div class="flex flex-col text-start">
-<h3 class="text-[16px] text-on-surface font-bold" data-i18n="step1-title">کارت‌های شبکه‌ت رو زنده ببین</h3>
+<h3 class="text-[15px] text-on-surface font-bold" data-i18n="step1-title">کارت‌های شبکه‌ت رو زنده ببین</h3>
 <p class="mt-1 text-[13px] text-on-surface-variant leading-relaxed" data-i18n="step1-desc">به محض اجرا، تمامی کارت‌های فیزیکی اترنت، شبکه وای‌فای و آداپتورهای مجازی با وضعیت زنده اتصال (وصل یا قطع) شناسایی می‌شوند.</p>
 </div>
 </div>
 <!-- Step 2 -->
-<div class="p-5 rounded-2xl bg-surface-container-low border border-surface-container-highest hover:border-primary/40 transition-all shadow-md flex items-start gap-3.5">
-<div class="w-9 h-9 rounded-xl bg-primary-container text-on-primary-container flex items-center justify-center font-mono-code text-[16px] font-bold shrink-0 shadow-sm">
-                2
-              </div>
+<div class="p-5 rounded-xl bg-surface-container-low flex items-start gap-3.5" data-reveal style="--reveal-delay:120ms">
+<div class="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center font-mono-code text-[14px] font-bold shrink-0">2</div>
 <div class="flex flex-col text-start">
-<h3 class="text-[16px] text-on-surface font-bold" data-i18n="step2-title">با درگ و دراپ ترتیب رو عوض کن</h3>
+<h3 class="text-[15px] text-on-surface font-bold" data-i18n="step2-title">با درگ و دراپ ترتیب رو عوض کن</h3>
 <p class="mt-1 text-[13px] text-on-surface-variant leading-relaxed" data-i18n="step2-desc">کافیست هر ردیف را با نشانگر ماوس بگیرید و بالا یا پایین ببرید. بالاترین ردیف، اولویت نخست مسیردهی اینترنت را از آن خود می‌کند.</p>
 </div>
 </div>
 <!-- Step 3 -->
-<div class="p-5 rounded-2xl bg-surface-container-low border border-surface-container-highest hover:border-tertiary/40 transition-all shadow-md flex items-start gap-3.5">
-<div class="w-9 h-9 rounded-xl bg-tertiary-container text-on-tertiary-container flex items-center justify-center font-mono-code text-[16px] font-bold shrink-0 shadow-sm">
-                3
-              </div>
+<div class="p-5 rounded-xl bg-surface-container-low flex items-start gap-3.5" data-reveal style="--reveal-delay:240ms">
+<div class="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center font-mono-code text-[14px] font-bold shrink-0">3</div>
 <div class="flex flex-col text-start">
-<h3 class="text-[16px] text-on-surface font-bold" data-i18n="step3-title">دکمه اعمال (Apply) رو بزن — تمام!</h3>
+<h3 class="text-[15px] text-on-surface font-bold" data-i18n="step3-title">دکمه اعمال (Apply) رو بزن — تمام!</h3>
 <p class="mt-1 text-[13px] text-on-surface-variant leading-relaxed" data-i18n="step3-desc">با فشردن دکمه اعمال، متریک‌های ویندوز بلافاصله پیکربندی می‌شوند؛ بدون قطعی اتصال اینترنت و بدون اجبار به ری‌استارت کامپیوتر.</p>
 </div>
 </div>
@@ -378,138 +397,111 @@
 </div>
 </section>
 <!-- 3. KEY FEATURES GRID (6 Cards) -->
-<section class="relative pt-2" id="features">
-<div class="flex flex-col items-center text-center mb-8">
-<span class="text-secondary font-mono-code text-[12px] uppercase tracking-wider font-bold bg-secondary/10 border border-secondary/20 px-3 py-0.5 rounded-full" data-i18n="features-badge">CAPABILITIES</span>
-<h2 class="mt-2 text-[26px] md:text-[32px] text-on-surface font-extrabold" data-i18n="features-title">ویژگی‌های کلیدی Network Priority Manager</h2>
-<p class="mt-1 text-[14px] text-on-surface-variant max-w-xl" data-i18n="features-subtitle">یک ابزار کم‌حجم، سریع و بدون مزاحمت جهت نظارت و پایداری تضمین‌شده ترافیک ویندوز</p>
+<section class="snap-section relative" id="features">
+<div class="flex flex-col items-center text-center mb-6" data-reveal>
+<h2 class="text-[22px] md:text-[28px] text-on-surface font-extrabold" data-i18n="features-title">ویژگی‌های کلیدی Network Priority Manager</h2>
+<p class="mt-1.5 text-[13px] text-on-surface-variant max-w-xl" data-i18n="features-subtitle">یک ابزار کم‌حجم، سریع و بدون مزاحمت جهت نظارت و پایداری تضمین‌شده ترافیک ویندوز</p>
 </div>
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
 <!-- Feature Card 1 -->
-<div class="p-5 rounded-2xl bg-surface-container-low border border-surface-container-high/80 hover:border-secondary/40 hover:bg-surface-container transition-all shadow-md flex flex-col items-start text-start group">
-<div class="w-11 h-11 rounded-xl bg-secondary-container/20 border border-secondary/30 text-secondary flex items-center justify-center mb-3 group-hover:scale-105 transition-transform shrink-0">
-<span class="material-symbols-outlined text-[22px]">lock_reset</span>
+<div class="p-4 rounded-xl bg-surface-container-low hover:bg-surface-container transition-all flex flex-col items-start text-start" data-reveal style="--reveal-delay:0ms">
+<div class="w-9 h-9 rounded-lg bg-primary/10 text-primary flex items-center justify-center mb-2 shrink-0">
+<svg class="w-[20px] h-[20px] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
 </div>
-<h3 class="text-[16px] text-on-surface font-bold" data-i18n="f1-title">جلوگیری از تغییر خودکار ویندوز</h3>
-<p class="mt-1.5 text-[13px] text-on-surface-variant leading-relaxed" data-i18n="f1-desc">با غیرفعال‌سازی هوشمند قابلیت Automatic Metric، ویندوز دیگر به شکل تصادفی و خودسرانه اولویت کارت شبکه شما را تغییر نخواهد داد.</p>
+<h3 class="text-[15px] text-on-surface font-bold" data-i18n="f1-title">جلوگیری از تغییر خودکار ویندوز</h3>
+<p class="mt-1 text-[12.5px] text-on-surface-variant leading-snug" data-i18n="f1-desc">با غیرفعال‌سازی هوشمند قابلیت Automatic Metric، ویندوز دیگر به شکل تصادفی و خودسرانه اولویت کارت شبکه شما را تغییر نخواهد داد.</p>
 </div>
 <!-- Feature Card 2 -->
-<div class="p-5 rounded-2xl bg-surface-container-low border border-surface-container-high/80 hover:border-primary/40 hover:bg-surface-container transition-all shadow-md flex flex-col items-start text-start group">
-<div class="w-11 h-11 rounded-xl bg-primary-container/20 border border-primary/30 text-primary flex items-center justify-center mb-3 group-hover:scale-105 transition-transform shrink-0">
-<span class="material-symbols-outlined text-[22px]">network_check</span>
+<div class="p-4 rounded-xl bg-surface-container-low hover:bg-surface-container transition-all flex flex-col items-start text-start" data-reveal style="--reveal-delay:70ms">
+<div class="w-9 h-9 rounded-lg bg-primary/10 text-primary flex items-center justify-center mb-2 shrink-0">
+<svg class="w-[20px] h-[20px] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 12h-4l-3 8L9 4l-3 8H2"/></svg>
 </div>
-<h3 class="text-[16px] text-on-surface font-bold" data-i18n="f2-title">وضعیت زنده‌ی کارت‌های شبکه</h3>
-<p class="mt-1.5 text-[13px] text-on-surface-variant leading-relaxed" data-i18n="f2-desc">مانیتورینگ پیوند فیزیکی در لحظه: آداپتورهای متصل با نشانگر سبز و موارد قطع‌شده یا نامعتبر با رنگ قرمز تفکیک می‌شوند.</p>
+<h3 class="text-[15px] text-on-surface font-bold" data-i18n="f2-title">وضعیت زنده‌ی کارت‌های شبکه</h3>
+<p class="mt-1 text-[12.5px] text-on-surface-variant leading-snug" data-i18n="f2-desc">مانیتورینگ پیوند فیزیکی در لحظه: آداپتورهای متصل با نشانگر سبز و موارد قطع‌شده یا نامعتبر با رنگ قرمز تفکیک می‌شوند.</p>
 </div>
 <!-- Feature Card 3 -->
-<div class="p-5 rounded-2xl bg-surface-container-low border border-surface-container-high/80 hover:border-tertiary/40 hover:bg-surface-container transition-all shadow-md flex flex-col items-start text-start group">
-<div class="w-11 h-11 rounded-xl bg-tertiary-container/20 border border-tertiary/30 text-tertiary flex items-center justify-center mb-3 group-hover:scale-105 transition-transform shrink-0">
-<span class="material-symbols-outlined text-[22px]">drag_pan</span>
+<div class="p-4 rounded-xl bg-surface-container-low hover:bg-surface-container transition-all flex flex-col items-start text-start" data-reveal style="--reveal-delay:140ms">
+<div class="w-9 h-9 rounded-lg bg-primary/10 text-primary flex items-center justify-center mb-2 shrink-0">
+<svg class="w-[20px] h-[20px] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="5 9 2 12 5 15"/><polyline points="9 5 12 2 15 5"/><polyline points="15 19 12 22 9 19"/><polyline points="19 9 22 12 19 15"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="12" y1="2" x2="12" y2="22"/></svg>
 </div>
-<h3 class="text-[16px] text-on-surface font-bold" data-i18n="f3-title">درگ و دراپ فوق‌العاده سریع</h3>
-<p class="mt-1.5 text-[13px] text-on-surface-variant leading-relaxed" data-i18n="f3-desc">بدون نیاز به نوشتن دستورات route add در ترمینال یا سردرگمی در پنجره‌های پیچیده Network Connections؛ اولویت‌ها را با ماوس بکشید و مرتب کنید.</p>
+<h3 class="text-[15px] text-on-surface font-bold" data-i18n="f3-title">درگ و دراپ فوق‌العاده سریع</h3>
+<p class="mt-1 text-[12.5px] text-on-surface-variant leading-snug" data-i18n="f3-desc">بدون نیاز به نوشتن دستورات route add در ترمینال یا سردرگمی در پنجره‌های پیچیده Network Connections؛ اولویت‌ها را با ماوس بکشید و مرتب کنید.</p>
 </div>
 <!-- Feature Card 4 -->
-<div class="p-5 rounded-2xl bg-surface-container-low border border-surface-container-high/80 hover:border-outline hover:bg-surface-container transition-all shadow-md flex flex-col items-start text-start group">
-<div class="w-11 h-11 rounded-xl bg-surface-container-highest border border-outline-variant/40 text-secondary flex items-center justify-center mb-3 group-hover:scale-105 transition-transform shrink-0">
-<span class="material-symbols-outlined text-[22px]">restore</span>
+<div class="p-4 rounded-xl bg-surface-container-low hover:bg-surface-container transition-all flex flex-col items-start text-start" data-reveal style="--reveal-delay:0ms">
+<div class="w-9 h-9 rounded-lg bg-primary/10 text-primary flex items-center justify-center mb-2 shrink-0">
+<svg class="w-[20px] h-[20px] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>
 </div>
-<h3 class="text-[16px] text-on-surface font-bold" data-i18n="f4-title">بازگردانی با یک کلیک (Restore)</h3>
-<p class="mt-1.5 text-[13px] text-on-surface-variant leading-relaxed" data-i18n="f4-desc">پشتیبان کامل از تنظیمات پیشین قبل از هر تغییری ثبت می‌گردد و با فشردن یک دکمه می‌توانید متریک‌ها را به حالت پیش‌فرض کارخانه بازگردانید.</p>
+<h3 class="text-[15px] text-on-surface font-bold" data-i18n="f4-title">بازگردانی با یک کلیک (Restore)</h3>
+<p class="mt-1 text-[12.5px] text-on-surface-variant leading-snug" data-i18n="f4-desc">پشتیبان کامل از تنظیمات پیشین قبل از هر تغییری ثبت می‌گردد و با فشردن یک دکمه می‌توانید متریک‌ها را به حالت پیش‌فرض کارخانه بازگردانید.</p>
 </div>
 <!-- Feature Card 5 -->
-<div class="p-5 rounded-2xl bg-surface-container-low border border-surface-container-high/80 hover:border-secondary/40 hover:bg-surface-container transition-all shadow-md flex flex-col items-start text-start group">
-<div class="w-11 h-11 rounded-xl bg-secondary-container/20 border border-secondary/30 text-secondary flex items-center justify-center mb-3 group-hover:scale-105 transition-transform shrink-0">
-<span class="material-symbols-outlined text-[22px]">power_settings_new</span>
+<div class="p-4 rounded-xl bg-surface-container-low hover:bg-surface-container transition-all flex flex-col items-start text-start" data-reveal style="--reveal-delay:70ms">
+<div class="w-9 h-9 rounded-lg bg-primary/10 text-primary flex items-center justify-center mb-2 shrink-0">
+<svg class="w-[20px] h-[20px] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2v10"/><path d="M18.4 6.6a9 9 0 1 1-12.8 0"/></svg>
 </div>
-<h3 class="text-[16px] text-on-surface font-bold" data-i18n="f5-title">حفظ بعد از راه‌اندازی (Persist)</h3>
-<p class="mt-1.5 text-[13px] text-on-surface-variant leading-relaxed" data-i18n="f5-desc">با فعال‌سازی گزینه Persist، تغییرات مورد نظر شما حتی پس از راه‌اندازی مجدد، خاموش شدن یا به‌روزرسانی سیستم پایدار باقی می‌ماند.</p>
+<h3 class="text-[15px] text-on-surface font-bold" data-i18n="f5-title">حفظ بعد از راه‌اندازی (Persist)</h3>
+<p class="mt-1 text-[12.5px] text-on-surface-variant leading-snug" data-i18n="f5-desc">با فعال‌سازی گزینه Persist، تغییرات مورد نظر شما حتی پس از راه‌اندازی مجدد، خاموش شدن یا به‌روزرسانی سیستم پایدار باقی می‌ماند.</p>
 </div>
 <!-- Feature Card 6 -->
-<div class="p-5 rounded-2xl bg-surface-container-low border border-surface-container-high/80 hover:border-primary/40 hover:bg-surface-container transition-all shadow-md flex flex-col items-start text-start group">
-<div class="w-11 h-11 rounded-xl bg-primary-container/20 border border-primary/30 text-primary flex items-center justify-center mb-3 group-hover:scale-105 transition-transform shrink-0">
-<span class="material-symbols-outlined text-[22px]">notifications_active</span>
+<div class="p-4 rounded-xl bg-surface-container-low hover:bg-surface-container transition-all flex flex-col items-start text-start" data-reveal style="--reveal-delay:140ms">
+<div class="w-9 h-9 rounded-lg bg-primary/10 text-primary flex items-center justify-center mb-2 shrink-0">
+<svg class="w-[20px] h-[20px] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
 </div>
-<h3 class="text-[16px] text-on-surface font-bold" data-i18n="f6-title">اجرا در پس‌زمینه (System Tray)</h3>
-<p class="mt-1.5 text-[13px] text-on-surface-variant leading-relaxed" data-i18n="f6-desc">این ابزار بسیار بهینه در سینی سیستم (Tray) مستقر شده و در صورت تغییر وضعیت اتصال کابل یا وای‌فای، اعلان‌های ضروری و سریع ارائه می‌دهد.</p>
-</div>
-</div>
-</section>
-<!-- 4. DUAL LANGUAGE BANNER & DEVELOPER / COMMUNITY BOX -->
-<section class="relative pt-2 flex flex-col gap-5">
-<!-- Dual Language Showcase Card -->
-<div class="p-5 md:p-6 rounded-2xl bg-surface-container-low border border-surface-container-high shadow-lg flex flex-col md:flex-row items-center justify-between gap-5">
-<div class="flex flex-col text-start max-w-xl">
-<div class="inline-flex items-center gap-1.5 text-secondary font-mono-code text-[12px] mb-1 font-bold">
-<span class="material-symbols-outlined text-[16px]">translate</span>
-<span data-i18n="i18n-badge" class="">INTERNATIONALIZATION</span>
-</div>
-<h3 class="text-[18px] text-on-surface font-bold" data-i18n="i18n-title">پشتیبانی کامل دو زبانه (فارسی / انگلیسی)</h3>
-<p class="mt-1 text-[13.5px] text-on-surface-variant leading-relaxed" data-i18n="i18n-desc">طراحی رابط کاربری دو جهته کاملاً سازگار با چیدمان راست‌به‌چپ (RTL) و چپ‌به‌راست (LTR). امکان تغییر فوری زبان با یک کلیک.</p>
-</div>
-<!-- Mini Language Toggle Mock -->
-<div class="bg-surface-container border border-outline-variant/30 rounded-2xl p-2 px-3 flex items-center gap-3 shadow-inner shrink-0">
-<div class="flex items-center bg-surface-container-lowest rounded-xl p-1 gap-1 border border-outline-variant/20">
-<button class="px-3 py-1 rounded-lg bg-secondary-container text-on-secondary-container font-mono-code text-[12px] font-bold shadow-sm transition-all" id="inline-btn-fa" onclick="setLanguage('fa')">
-                🇮🇷 فارسی
-              </button>
-<button class="px-3 py-1 rounded-lg text-on-surface-variant hover:text-on-surface font-mono-code text-[12px] transition-all" id="inline-btn-en" onclick="setLanguage('en')">EN English
-              </button>
-</div>
-<button class="w-8 h-8 rounded-full bg-surface-container-high hover:bg-surface-bright border border-outline-variant/30 flex items-center justify-center text-primary transition-all shrink-0" onclick="toggleLanguage()">
-<span class="material-symbols-outlined text-[18px]">sync</span>
-</button>
+<h3 class="text-[15px] text-on-surface font-bold" data-i18n="f6-title">اجرا در پس‌زمینه (System Tray)</h3>
+<p class="mt-1 text-[12.5px] text-on-surface-variant leading-snug" data-i18n="f6-desc">این ابزار بسیار بهینه در سینی سیستم (Tray) مستقر شده و در صورت تغییر وضعیت اتصال کابل یا وای‌فای، اعلان‌های ضروری و سریع ارائه می‌دهد.</p>
 </div>
 </div>
 <!-- Developer, Open Source & Support Section -->
-<div class="p-5 md:p-6 rounded-2xl bg-surface-container-lowest border border-surface-container-highest shadow-xl flex flex-col md:flex-row items-center justify-between gap-5" id="docs">
+<div class="mt-5 p-5 rounded-xl bg-surface-container-low flex flex-col md:flex-row items-center justify-between gap-4" id="docs" data-reveal>
 <div class="flex items-center gap-4 text-start">
-<div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-secondary-container via-surface-container-high to-primary flex items-center justify-center text-on-surface shadow-md shrink-0 border border-secondary/30">
-<span class="material-symbols-outlined text-[26px]">terminal</span>
+<div class="w-11 h-11 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
+<svg class="w-[22px] h-[22px] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
 </div>
 <div class="flex flex-col">
 <div class="flex items-center gap-2">
-<span class="text-[17px] text-on-surface font-bold">Network Priority Manager</span>
-<span class="font-mono-code text-[11px] px-2 py-0.5 rounded bg-surface-container text-secondary font-bold border border-secondary/30">MIT Open Source</span>
+<span class="text-[16px] text-on-surface font-bold">Network Priority Manager</span>
+<span class="font-mono-code text-[11px] px-2 py-0.5 rounded bg-surface-container-high text-on-surface-variant font-medium">MIT Open Source</span>
 </div>
-<p class="mt-1 text-[13px] text-on-surface-variant" data-i18n="dev-info">توسعه یافته توسط <span class="text-on-surface font-bold text-secondary">A1iRoX</span> • پروژه کاملاً عام‌المنفعه، متن‌باز و آزاد برای عموم کاربران</p>
+<p class="mt-1 text-[13px] text-on-surface-variant" data-i18n="dev-info">توسعه یافته توسط <span class="text-on-surface font-bold text-primary">A1iRoX</span> • پروژه کاملاً عام‌المنفعه، متن‌باز و آزاد برای عموم کاربران</p>
 </div>
 </div>
 <!-- Community & Donation Links -->
 <div class="flex items-center gap-2 flex-wrap justify-end">
-<a class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-surface-container hover:bg-surface-container-high border border-outline-variant/30 text-on-surface text-[13px] font-medium transition-all" href="https://donofa.ir/alirox" rel="noopener noreferrer" target="_blank">
-<span class="material-symbols-outlined text-[17px] text-error shrink-0">favorite</span>
+<a class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-on-surface text-[13px] font-medium transition-all" href="https://donofa.ir/alirox" rel="noopener noreferrer" target="_blank">
+<svg class="w-[16px] h-[16px] text-error shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
 <span data-i18n="btn-donate" class="">حمایت مالی</span>
 </a>
-<a class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-surface-container hover:bg-surface-container-high border border-outline-variant/30 text-on-surface text-[13px] font-medium transition-all" href="https://github.com/a1irox/NetworkSuite" rel="noopener noreferrer" target="_blank">
-<span class="material-symbols-outlined text-[17px] text-tertiary shrink-0">description</span>
+<a class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-on-surface text-[13px] font-medium transition-all" href="https://github.com/a1irox/NetworkSuite" rel="noopener noreferrer" target="_blank">
+<svg class="w-[16px] h-[16px] text-on-surface-variant shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="16" y2="17"/></svg>
 <span data-i18n="btn-docs" class="">مستندات گیت‌هاب</span>
 </a>
-<a class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-secondary-container hover:bg-secondary text-on-secondary-container hover:text-on-secondary text-[13px] font-bold transition-all shadow-md" href="https://t.me/aliroxtg" rel="noopener noreferrer" target="_blank">
+<a class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-primary hover:brightness-110 text-on-primary text-[13px] font-bold transition-all" href="https://t.me/aliroxtg" rel="noopener noreferrer" target="_blank">
 <svg class="w-4 h-4 fill-current shrink-0" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.75-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"></path></svg>
 <span data-i18n="btn-telegram" class="">کانال تلگرام</span>
 </a>
 </div>
 </div>
+<!-- Footer content lives inside the same slide so no extra scroll is needed -->
+<footer id="page-footer" class="w-full border-t border-surface-container-high mt-4 pt-3" data-reveal style="--reveal-delay:80ms">
+<div class="flex flex-col md:flex-row items-center justify-between gap-3">
+<div class="flex items-center gap-2 flex-wrap justify-center">
+<span class="text-[12.5px] text-on-surface-variant font-medium" data-i18n="footer-copyright">© 2026 A1iRoX. تمامی حقوق محفوظ است.</span>
+<span class="text-[11.5px] text-on-surface-variant font-medium" data-i18n="memorial-badge">به یاد جاوید نام‌های وطن 🖤</span>
+</div>
+<a class="text-[13px] text-on-surface-variant hover:text-primary transition-colors" data-i18n="footer-bug" href="https://t.me/alirox_admin" rel="noopener noreferrer" target="_blank">گزارش باگ</a>
+</div>
+</footer>
 </section>
 </div>
 </main>
-<!-- FOOTER -->
-<footer class="relative z-10 w-full bg-surface-container-lowest border-t border-surface-container-high py-6 mt-12">
-<div class="max-w-[1240px] mx-auto px-container-padding-mobile lg:px-container-padding-desktop flex flex-col md:flex-row items-center justify-between gap-4">
-<div class="flex flex-col sm:flex-row items-center gap-2 text-center sm:text-start">
-<div class="w-2.5 h-2.5 rounded-full bg-primary animate-pulse"></div>
-<span class="font-mono-code text-[12px] text-on-surface-variant font-medium">Network Priority Manager © 2026 • Released under MIT License</span>
-<span class="hidden sm:inline text-on-surface-variant/40">•</span>
-<span class="text-[12.5px] text-on-surface-variant" data-i18n="footer-tagline">حداکثر پایداری و اولویت‌بندی هوشمند ترافیک ویندوز</span>
-</div>
-<div class="flex items-center gap-5 flex-wrap justify-center text-[13px]">
-<a class="text-on-surface-variant hover:text-primary transition-colors" data-i18n="footer-bug" href="https://t.me/alirox_admin" rel="noopener noreferrer" target="_blank">گزارش باگ</a>
-
-
-</div>
-</div>
-</footer>
+<!-- Persistent scroll direction hint -->
+<button id="scroll-hint" type="button" aria-label="Scroll" class="fixed bottom-5 sm:bottom-7 rtl:left-3 ltr:right-3 z-40 flex flex-col items-center gap-1.5 bg-surface-container-low/90 backdrop-blur-md border border-surface-container-high/60 rounded-full px-4 py-2.5 shadow-lg hover:bg-surface-container transition-all">
+<span id="scroll-hint-text" class="text-[12px] font-medium text-on-surface-variant whitespace-nowrap" data-i18n="scroll-hint-down">ادامه داره، اسکرول کن</span>
+<span id="scroll-hint-arrow-wrap" class="inline-flex transition-transform duration-300">
+<svg id="scroll-hint-arrow" class="w-[15px] h-[15px] text-on-surface-variant" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14"/><path d="m19 12-7 7-7-7"/></svg>
+</span>
+</button>
 <script>
   const translations = {
     fa: {
@@ -523,14 +515,16 @@
       "nav-docs": "مستندات",
       "nav-btn-download": "دانلود نسخه ویندوز",
       "hero-badge": "ابزار سبک، متن‌باز و 100% رایگان برای ویندوز",
-      "hero-title": "مدیریت هوشمند <span class=\"text-transparent bg-clip-text bg-gradient-to-r from-secondary via-primary to-tertiary\">اولویت شبکه</span>",
+      "scroll-hint-down": "ادامه داره، اسکرول کن",
+      "scroll-hint-up": "برگرد بالا",
+      "hero-title": "مدیریت هوشمند <span class=\"text-primary\">اولویت شبکه</span>",
       "hero-desc": "تعیین کنید سیستم شما اول از کدام کارت شبکه (کابل اترنت LAN، شبکه وای‌فای یا آداپتورهای مجازی) استفاده کند؛ تنها با کشیدن و رها کردن (Drag & Drop).",
       "hero-os-support": "پشتیبانی کامل از Windows 8 / 10 / 11 و Windows Server 2012 به بالا",
       "download-btn-title": "دانلود مستقیم برای ویندوز",
       "download-btn-sub": "نسخه رسمی v1.0.0",
       "download-caption": "بدون نیاز به نصب (Portable) • بدون نیاز به پیش‌نیازهای سنگین سیستمی",
       "smartscreen-title": "نکته اجرای اولیه در ویندوز (SmartScreen):",
-      "smartscreen-desc": "از آنجا که نرم‌افزار کاملاً رایگان و متن‌باز بوده و فاقد امضای دیجیتال تجاری شرکتی است، ممکن است پنجره اخطار اولیه ویندوز نمایش داده شود. در این صورت روی <span class=\"text-secondary font-semibold\">More info</span> و سپس <span class=\"text-primary font-semibold\">Run anyway</span> کلیک فرمایید.",
+      "smartscreen-desc": "از آنجا که نرم‌افزار کاملاً رایگان و متن‌باز بوده و فاقد امضای دیجیتال تجاری شرکتی است، ممکن است پنجره اخطار اولیه ویندوز نمایش داده شود. در این صورت روی <span class=\"text-primary font-semibold\">More info</span> و سپس <span class=\"text-primary font-semibold\">Run anyway</span> کلیک فرمایید.",
       "preview-badge": "INTERACTIVE PREVIEW",
       "preview-title": "کنترل بی‌دردسر ترافیک شبکه در 3 گام",
       "preview-subtitle": "تنظیم دقیق Interface Metric کارت‌ها، بدون نیاز به دستکاری دستی دستورات خط‌فرمان route یا ویرایش پیچیده رجیستری",
@@ -566,15 +560,14 @@
       "f5-desc": "با فعال‌سازی گزینه Persist، تغییرات مورد نظر شما حتی پس از راه‌اندازی مجدد، خاموش شدن یا به‌روزرسانی سیستم پایدار باقی می‌ماند.",
       "f6-title": "اجرا در پس‌زمینه (System Tray)",
       "f6-desc": "این ابزار بسیار بهینه در سینی سیستم (Tray) مستقر شده و در صورت تغییر وضعیت اتصال کابل یا وای‌فای، اعلان‌های ضروری و سریع ارائه می‌دهد.",
-      "i18n-badge": "INTERNATIONALIZATION",
-      "i18n-title": "پشتیبانی کامل دو زبانه (فارسی / انگلیسی)",
-      "i18n-desc": "طراحی رابط کاربری دو جهته کاملاً سازگار با چیدمان راست‌به‌چپ (RTL) و چپ‌به‌راست (LTR). امکان تغییر فوری زبان با یک کلیک.",
-      "dev-info": "توسعه یافته توسط <span class=\"text-on-surface font-bold text-secondary\">A1iRoX</span> • پروژه کاملاً عام‌المنفعه، متن‌باز و آزاد برای عموم کاربران",
+      "dev-info": "توسعه یافته توسط <span class=\"text-on-surface font-bold text-primary\">A1iRoX</span> • پروژه کاملاً عام‌المنفعه، متن‌باز و آزاد برای عموم کاربران",
       "btn-donate": "حمایت مالی",
       "btn-docs": "مستندات گیت‌هاب",
       "btn-telegram": "کانال تلگرام",
       "footer-tagline": "حداکثر پایداری و اولویت‌بندی هوشمند ترافیک ویندوز",
       "footer-bug": "گزارش باگ",
+      "footer-copyright": "© 2026 A1iRoX. تمامی حقوق محفوظ است.",
+      "memorial-badge": "به یاد جاوید نام‌های وطن 🖤",
       "footer-features": "امکانات",
       "footer-docs": "مستندات فنی"
     },
@@ -589,14 +582,16 @@
       "nav-docs": "Documentation",
       "nav-btn-download": "Download for Windows",
       "hero-badge": "Lightweight, Open Source & 100% Free for Windows",
-      "hero-title": "Intelligent Network <span class=\"text-transparent bg-clip-text bg-gradient-to-r from-secondary via-primary to-tertiary\">Priority Management</span>",
+      "scroll-hint-down": "Keep going, scroll down",
+      "scroll-hint-up": "Back to top",
+      "hero-title": "Intelligent Network <span class=\"text-primary\">Priority Management</span>",
       "hero-desc": "Control which network card (Ethernet LAN, Wi-Fi, or Virtual adapters) your system uses first; simply by Drag & Drop.",
       "hero-os-support": "Full support for Windows 8 / 10 / 11 & Windows Server 2012+",
       "download-btn-title": "Direct Download for Windows",
       "download-btn-sub": "Official Release v1.0.0",
       "download-caption": "Portable (No installation required) • Zero heavy system dependencies",
       "smartscreen-title": "Windows SmartScreen notice:",
-      "smartscreen-desc": "Because the tool is free and lacks a paid commercial digital signature, Windows may show a SmartScreen warning. Simply click <span class=\"text-secondary font-semibold\">More info</span> and then <span class=\"text-primary font-semibold\">Run anyway</span>.",
+      "smartscreen-desc": "Because the tool is free and lacks a paid commercial digital signature, Windows may show a SmartScreen warning. Simply click <span class=\"text-primary font-semibold\">More info</span> and then <span class=\"text-primary font-semibold\">Run anyway</span>.",
       "preview-badge": "INTERACTIVE PREVIEW",
       "preview-title": "Effortless Network Traffic Control in 3 Steps",
       "preview-subtitle": "Accurate Interface Metric configuration without manual route add or complex registry tweaks",
@@ -632,15 +627,14 @@
       "f5-desc": "With Persist enabled, your customized priority routing remains active across reboots, shutdowns, and Windows updates.",
       "f6-title": "Run in Background (System Tray)",
       "f6-desc": "Lightweight system tray integration provides instant unobtrusive alerts whenever cable or Wi-Fi status changes.",
-      "i18n-badge": "INTERNATIONALIZATION",
-      "i18n-title": "Full Bilingual Support (Persian / English)",
-      "i18n-desc": "Dual-direction UI fully designed for both Right-to-Left (RTL) and Left-to-Right (LTR) layouts with instant language switching.",
-      "dev-info": "Developed by <span class=\"text-on-surface font-bold text-secondary\">A1iRoX</span> • 100% Free & Open-Source MIT project for everyone",
+      "dev-info": "Developed by <span class=\"text-on-surface font-bold text-primary\">A1iRoX</span> • 100% Free & Open-Source MIT project for everyone",
       "btn-donate": "Support / Donate",
       "btn-docs": "GitHub Docs",
       "btn-telegram": "Telegram Channel",
       "footer-tagline": "Maximum stability and intelligent traffic prioritization for Windows",
       "footer-bug": "Report Bug",
+      "footer-copyright": "© 2026 A1iRoX. All rights reserved.",
+      "memorial-badge": "In memory of the homeland's eternal names 🖤",
       "footer-features": "Features",
       "footer-docs": "Docs"
     }
@@ -674,22 +668,93 @@
     const inlineEn = document.getElementById('inline-btn-en');
 
     if (lang === 'fa') {
-      if (navFa) navFa.className = "px-2.5 py-0.5 rounded-full bg-surface-container text-secondary font-mono-code text-[11px] font-bold shadow-sm transition-all";
-      if (navEn) navEn.className = "px-2.5 py-0.5 rounded-full text-on-surface-variant hover:text-on-surface font-mono-code text-[11px] transition-all";
-      if (inlineFa) inlineFa.className = "px-3 py-1 rounded-lg bg-secondary-container text-on-secondary-container font-mono-code text-[12px] font-bold shadow-sm transition-all";
-      if (inlineEn) inlineEn.className = "px-3 py-1 rounded-lg text-on-surface-variant hover:text-on-surface font-mono-code text-[12px] transition-all";
+      if (navFa) navFa.className = "px-2.5 py-1 rounded-full bg-surface-container-high text-primary font-mono-code text-[11px] font-bold transition-all";
+      if (navEn) navEn.className = "px-2.5 py-1 rounded-full text-on-surface-variant hover:text-on-surface font-mono-code text-[11px] transition-all";
+      if (inlineFa) inlineFa.className = "px-3.5 py-1.5 rounded-full bg-primary/15 text-primary font-mono-code text-[12px] font-bold transition-all";
+      if (inlineEn) inlineEn.className = "px-3.5 py-1.5 rounded-full text-on-surface-variant hover:text-on-surface font-mono-code text-[12px] transition-all";
     } else {
-      if (navEn) navEn.className = "px-2.5 py-0.5 rounded-full bg-surface-container text-secondary font-mono-code text-[11px] font-bold shadow-sm transition-all";
-      if (navFa) navFa.className = "px-2.5 py-0.5 rounded-full text-on-surface-variant hover:text-on-surface font-mono-code text-[11px] transition-all";
-      if (inlineEn) inlineEn.className = "px-3 py-1 rounded-lg bg-secondary-container text-on-secondary-container font-mono-code text-[12px] font-bold shadow-sm transition-all";
-      if (inlineFa) inlineFa.className = "px-3 py-1 rounded-lg text-on-surface-variant hover:text-on-surface font-mono-code text-[12px] transition-all";
+      if (navEn) navEn.className = "px-2.5 py-1 rounded-full bg-surface-container-high text-primary font-mono-code text-[11px] font-bold transition-all";
+      if (navFa) navFa.className = "px-2.5 py-1 rounded-full text-on-surface-variant hover:text-on-surface font-mono-code text-[11px] transition-all";
+      if (inlineEn) inlineEn.className = "px-3.5 py-1.5 rounded-full bg-primary/15 text-primary font-mono-code text-[12px] font-bold transition-all";
+      if (inlineFa) inlineFa.className = "px-3.5 py-1.5 rounded-full text-on-surface-variant hover:text-on-surface font-mono-code text-[12px] transition-all";
     }
   }
 
   function toggleLanguage() {
     setLanguage(currentLang === 'fa' ? 'en' : 'fa');
   }
+
+  // Scrollytelling: reveal sections/cards as they enter the viewport
+  (function () {
+    const revealEls = document.querySelectorAll('[data-reveal]');
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (prefersReduced || !('IntersectionObserver' in window)) {
+      revealEls.forEach(el => el.classList.add('is-visible'));
+    } else {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.15, rootMargin: '0px 0px -8% 0px' });
+
+      revealEls.forEach(el => observer.observe(el));
+    }
+
+    // Scroll progress indicator in the header
+    const progressBar = document.getElementById('scroll-progress');
+    const scrollHint = document.getElementById('scroll-hint');
+    const scrollHintText = document.getElementById('scroll-hint-text');
+    const scrollHintArrowWrap = document.getElementById('scroll-hint-arrow-wrap');
+    const pageFooter = document.getElementById('page-footer');
+    let hintIsUp = false;
+
+    const setHintDirection = (isUp) => {
+      if (isUp === hintIsUp) return;
+      hintIsUp = isUp;
+      const key = hintIsUp ? 'scroll-hint-up' : 'scroll-hint-down';
+      if (scrollHintText) {
+        const dict = translations[currentLang];
+        scrollHintText.setAttribute('data-i18n', key);
+        scrollHintText.textContent = (dict && dict[key]) || key;
+      }
+      if (scrollHintArrowWrap) {
+        scrollHintArrowWrap.classList.toggle('is-up', hintIsUp);
+      }
+    };
+
+    if (scrollHint) {
+      scrollHint.addEventListener('click', () => {
+        window.scrollTo({
+          top: hintIsUp ? 0 : document.documentElement.scrollHeight,
+          behavior: 'smooth'
+        });
+      });
+    }
+
+    // Reliable bottom detection: watch the real footer instead of computing scrollHeight math,
+    // since snap sections / dvh / late-loading fonts can make that math a bit off.
+    if (pageFooter && scrollHint && 'IntersectionObserver' in window) {
+      const footerObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => setHintDirection(entry.isIntersecting));
+      }, { threshold: 0.4 });
+      footerObserver.observe(pageFooter);
+    }
+
+    if (progressBar) {
+      const updateProgress = () => {
+        const scrollTop = window.scrollY || document.documentElement.scrollTop;
+        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        const ratio = docHeight > 0 ? Math.min(scrollTop / docHeight, 1) : 0;
+        progressBar.style.transform = `scaleX(${ratio})`;
+      };
+      updateProgress();
+      window.addEventListener('scroll', updateProgress, { passive: true });
+      window.addEventListener('resize', updateProgress);
+    }
+  })();
 </script>
-
-
 </body></html>
