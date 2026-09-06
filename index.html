@@ -58,24 +58,6 @@
       transform: scaleX(0);
       transition: transform 0.1s linear;
     }
-    #scroll-hint {
-      transition: background-color 0.3s ease;
-    }
-    @keyframes hint-bounce {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(4px); }
-    }
-    #scroll-hint-arrow {
-      animation: hint-bounce 1.6s ease-in-out infinite;
-    }
-    #scroll-hint-arrow-wrap.is-up {
-      transform: rotate(180deg);
-    }
-    @media (prefers-reduced-motion: reduce) {
-      #scroll-hint-arrow {
-        animation: none;
-      }
-    }
     @media (prefers-reduced-motion: reduce) {
       [data-reveal] {
         opacity: 1 !important;
@@ -86,7 +68,7 @@
         scroll-behavior: auto;
       }
     }
-    /* Page-by-page scrollytelling: each main section snaps like a slide */
+    /* Two-page snap: scrolling from Hero jumps straight to Features, no lingering in the gap between them */
     html {
       scroll-snap-type: y mandatory;
       scroll-padding-top: 72px;
@@ -102,7 +84,6 @@
     @media (max-width: 640px) {
       .snap-section {
         min-height: auto;
-        scroll-snap-align: start;
       }
     }
 </style>
@@ -200,7 +181,7 @@
 <!-- STICKY TOP NAVBAR -->
 <header class="sticky top-0 left-0 right-0 z-50 bg-surface/90 backdrop-blur-xl border-b border-surface-container-high/60">
 <div id="scroll-progress" class="absolute bottom-0 left-0 h-[2px] w-full bg-primary"></div>
-<div class="h-[72px] max-w-[1080px] mx-auto px-container-padding-mobile lg:px-container-padding-desktop flex items-center justify-between gap-gutter-md">
+<div class="h-[72px] max-w-[1320px] mx-auto px-container-padding-mobile lg:px-container-padding-desktop flex items-center justify-between gap-gutter-md">
 <!-- Logo & App Name -->
 <a class="flex items-center gap-gutter-sm group" href="#top">
 <div class="w-9 h-9 rounded-lg bg-surface-container-high flex items-center justify-center text-primary shrink-0">
@@ -232,9 +213,14 @@
 </header>
 <!-- MAIN DOCUMENT FLOW -->
 <main class="relative z-10 w-full flex-1">
-<div class="max-w-[1080px] mx-auto px-container-padding-mobile lg:px-container-padding-desktop py-14 md:py-20 flex flex-col gap-section-gap">
-<!-- 1. HERO SECTION -->
-<section class="snap-section relative flex flex-col items-center text-center" id="hero">
+<div class="max-w-[1320px] mx-auto px-container-padding-mobile lg:px-container-padding-desktop py-14 md:py-20 flex flex-col gap-20 sm:gap-24 md:gap-32">
+<!-- 1+2. HERO (right) + PREVIEW (left) — two columns side by side with a divider, to shrink page height -->
+<section class="snap-section relative" id="hero">
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-14 lg:gap-0 relative">
+<!-- Vertical divider between the two columns (desktop only) -->
+<div class="hidden lg:block absolute inset-y-2 start-1/2 -translate-x-1/2 w-px bg-surface-container-high" aria-hidden="true"></div>
+<!-- RIGHT COLUMN: Hero -->
+<div class="flex flex-col items-center text-center lg:pe-12">
 <!-- Badge Chip -->
 <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-surface-container-low text-on-surface-variant" data-reveal>
 <span class="w-1.5 h-1.5 rounded-full bg-primary shrink-0"></span>
@@ -246,7 +232,7 @@
 <p class="mt-5 text-[16px] md:text-[17px] text-on-surface-variant max-w-2xl leading-relaxed font-normal" data-i18n="hero-desc">تعیین کنید سیستم شما اول از کدام کارت شبکه (کابل اترنت LAN، شبکه وای‌فای یا آداپتورهای مجازی) استفاده کند؛ تنها با کشیدن و رها کردن (Drag &amp; Drop).</p>
 <div class="mt-4 flex items-center gap-2 text-on-surface-variant text-[12.5px] font-mono-code">
 <svg class="w-[15px] h-[15px] text-primary shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/><path d="m9 12 2 2 4-4"/></svg>
-<span data-i18n="hero-os-support" class="">پشتیبانی کامل از Windows 8 / 10 / 11 و Windows Server 2012 به بالا</span>
+<span data-i18n="hero-os-support" class="">پشتیبانی کامل از Windows 8 / 10 / 11</span>
 </div>
 </div>
 <!-- Primary Action Download Button & Metadata -->
@@ -256,7 +242,6 @@
 <svg class="w-[26px] h-[26px] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="13" x="3" y="4" rx="2"/><path d="M8 21h8"/><path d="M12 17v4"/></svg>
 <div class="flex flex-col text-start">
 <span class="text-[16px] font-bold leading-snug" data-i18n="download-btn-title">دانلود مستقیم برای ویندوز</span>
-<span class="font-mono-code text-[11px] opacity-75" data-i18n="download-btn-sub">نسخه رسمی v1.0.0</span>
 </div>
 </div>
 <svg class="w-[20px] h-[20px] transition-transform rtl:group-hover:-translate-x-1 ltr:group-hover:translate-x-1 shrink-0 rtl:rotate-180 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
@@ -271,17 +256,15 @@
 <p class="text-[12.5px] text-on-surface-variant leading-relaxed mt-1" data-i18n="smartscreen-desc">از آنجا که نرم‌افزار کاملاً رایگان و متن‌باز بوده و فاقد امضای دیجیتال تجاری شرکتی است، ممکن است پنجره اخطار اولیه ویندوز نمایش داده شود. در این صورت روی <span class="text-primary font-semibold">More info</span> و سپس <span class="text-primary font-semibold">Run anyway</span> کلیک فرمایید.</p>
 </div>
 </div>
-</section>
-<!-- 2. INTERACTIVE MOCKUP & HOW IT WORKS SECTION -->
-<section class="snap-section relative" id="preview">
-<div class="flex flex-col items-center text-center mb-10" data-reveal>
-<h2 class="text-[24px] md:text-[30px] text-on-surface font-extrabold" data-i18n="preview-title">کنترل بی‌دردسر ترافیک شبکه در 3 گام</h2>
-<p class="mt-2 text-[14px] text-on-surface-variant max-w-xl" data-i18n="preview-subtitle">تنظیم دقیق Interface Metric کارت‌ها، بدون نیاز به دستکاری دستی دستورات خط‌فرمان route یا ویرایش پیچیده رجیستری</p>
 </div>
-<!-- Grid Layout: App Mockup + Step Explanations -->
-<div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
-<!-- Live Windows App Mockup Frame (7 Cols) -->
-<div class="lg:col-span-7 flex flex-col bg-surface-container-lowest rounded-2xl overflow-hidden" dir="ltr" data-reveal>
+<!-- LEFT COLUMN: Interactive Preview & How it Works -->
+<div class="flex flex-col lg:ps-12" id="preview">
+<div class="flex flex-col items-center text-center mb-6" data-reveal>
+<h2 class="text-[22px] md:text-[26px] text-on-surface font-extrabold" data-i18n="preview-title">کنترل بی‌دردسر ترافیک شبکه در 3 گام</h2>
+<p class="mt-2 text-[13.5px] text-on-surface-variant max-w-xl" data-i18n="preview-subtitle">تنظیم دقیق Interface Metric کارت‌ها، بدون نیاز به دستکاری دستی دستورات خط‌فرمان route یا ویرایش پیچیده رجیستری</p>
+</div>
+<!-- Live Windows App Mockup Frame -->
+<div class="w-full flex flex-col bg-surface-container-lowest rounded-2xl overflow-hidden" dir="ltr" data-reveal>
 <!-- Window Header / Title Bar -->
 <div class="bg-surface-container-high px-4 py-2.5 flex items-center justify-between">
 <div class="flex items-center gap-2">
@@ -366,36 +349,39 @@
 </div>
 </div>
 </div>
-</div>
-<!-- 3 Step Cards Beside Mockup (5 Cols) -->
-<div class="lg:col-span-5 flex flex-col justify-between gap-4">
+<!-- 3 Step Cards below Mockup (row of 3 on desktop, stacked on mobile) -->
+<div class="mt-5 grid grid-cols-1 lg:grid-cols-3 gap-3">
 <!-- Step 1 -->
-<div class="p-5 rounded-xl bg-surface-container-low flex items-start gap-3.5" data-reveal>
+<div class="p-4 rounded-xl bg-surface-container-low flex items-start lg:flex-col gap-3.5 lg:gap-2" data-reveal>
 <div class="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center font-mono-code text-[14px] font-bold shrink-0">1</div>
 <div class="flex flex-col text-start">
-<h3 class="text-[15px] text-on-surface font-bold" data-i18n="step1-title">کارت‌های شبکه‌ت رو زنده ببین</h3>
-<p class="mt-1 text-[13px] text-on-surface-variant leading-relaxed" data-i18n="step1-desc">به محض اجرا، تمامی کارت‌های فیزیکی اترنت، شبکه وای‌فای و آداپتورهای مجازی با وضعیت زنده اتصال (وصل یا قطع) شناسایی می‌شوند.</p>
+<h3 class="text-[15px] lg:text-[13.5px] text-on-surface font-bold" data-i18n="step1-title">کارت‌های شبکه‌ت رو زنده ببین</h3>
+<p class="mt-1 text-[13px] lg:text-[12px] text-on-surface-variant leading-relaxed" data-i18n="step1-desc">به محض اجرا، تمامی کارت‌های فیزیکی اترنت، شبکه وای‌فای و آداپتورهای مجازی با وضعیت زنده اتصال (وصل یا قطع) شناسایی می‌شوند.</p>
 </div>
 </div>
 <!-- Step 2 -->
-<div class="p-5 rounded-xl bg-surface-container-low flex items-start gap-3.5" data-reveal style="--reveal-delay:120ms">
+<div class="p-4 rounded-xl bg-surface-container-low flex items-start lg:flex-col gap-3.5 lg:gap-2" data-reveal style="--reveal-delay:120ms">
 <div class="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center font-mono-code text-[14px] font-bold shrink-0">2</div>
 <div class="flex flex-col text-start">
-<h3 class="text-[15px] text-on-surface font-bold" data-i18n="step2-title">با درگ و دراپ ترتیب رو عوض کن</h3>
-<p class="mt-1 text-[13px] text-on-surface-variant leading-relaxed" data-i18n="step2-desc">کافیست هر ردیف را با نشانگر ماوس بگیرید و بالا یا پایین ببرید. بالاترین ردیف، اولویت نخست مسیردهی اینترنت را از آن خود می‌کند.</p>
+<h3 class="text-[15px] lg:text-[13.5px] text-on-surface font-bold" data-i18n="step2-title">با درگ و دراپ ترتیب رو عوض کن</h3>
+<p class="mt-1 text-[13px] lg:text-[12px] text-on-surface-variant leading-relaxed" data-i18n="step2-desc">کافیست هر ردیف را با نشانگر ماوس بگیرید و بالا یا پایین ببرید. بالاترین ردیف، اولویت نخست مسیردهی اینترنت را از آن خود می‌کند.</p>
 </div>
 </div>
 <!-- Step 3 -->
-<div class="p-5 rounded-xl bg-surface-container-low flex items-start gap-3.5" data-reveal style="--reveal-delay:240ms">
+<div class="p-4 rounded-xl bg-surface-container-low flex items-start lg:flex-col gap-3.5 lg:gap-2" data-reveal style="--reveal-delay:240ms">
 <div class="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center font-mono-code text-[14px] font-bold shrink-0">3</div>
 <div class="flex flex-col text-start">
-<h3 class="text-[15px] text-on-surface font-bold" data-i18n="step3-title">دکمه اعمال (Apply) رو بزن — تمام!</h3>
-<p class="mt-1 text-[13px] text-on-surface-variant leading-relaxed" data-i18n="step3-desc">با فشردن دکمه اعمال، متریک‌های ویندوز بلافاصله پیکربندی می‌شوند؛ بدون قطعی اتصال اینترنت و بدون اجبار به ری‌استارت کامپیوتر.</p>
+<h3 class="text-[15px] lg:text-[13.5px] text-on-surface font-bold" data-i18n="step3-title">دکمه اعمال (Apply) رو بزن — تمام!</h3>
+<p class="mt-1 text-[13px] lg:text-[12px] text-on-surface-variant leading-relaxed" data-i18n="step3-desc">با فشردن دکمه اعمال، متریک‌های ویندوز بلافاصله پیکربندی می‌شوند؛ بدون قطعی اتصال اینترنت و بدون اجبار به ری‌استارت کامپیوتر.</p>
+</div>
+</div>
 </div>
 </div>
 </div>
 </div>
 </section>
+<!-- Horizontal divider between the Hero/Preview section and Features section -->
+<div class="w-full max-w-3xl mx-auto h-px bg-surface-container-high" aria-hidden="true"></div>
 <!-- 3. KEY FEATURES GRID (6 Cards) -->
 <section class="snap-section relative" id="features">
 <div class="flex flex-col items-center text-center mb-6" data-reveal>
@@ -495,13 +481,6 @@
 </section>
 </div>
 </main>
-<!-- Persistent scroll direction hint -->
-<button id="scroll-hint" type="button" aria-label="Scroll" class="fixed bottom-5 sm:bottom-7 rtl:left-3 ltr:right-3 z-40 flex flex-col items-center gap-1.5 bg-surface-container-low/90 backdrop-blur-md border border-surface-container-high/60 rounded-full px-4 py-2.5 shadow-lg hover:bg-surface-container transition-all">
-<span id="scroll-hint-text" class="text-[12px] font-medium text-on-surface-variant whitespace-nowrap" data-i18n="scroll-hint-down">ادامه داره، اسکرول کن</span>
-<span id="scroll-hint-arrow-wrap" class="inline-flex transition-transform duration-300">
-<svg id="scroll-hint-arrow" class="w-[15px] h-[15px] text-on-surface-variant" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14"/><path d="m19 12-7 7-7-7"/></svg>
-</span>
-</button>
 <script>
   const translations = {
     fa: {
@@ -515,13 +494,10 @@
       "nav-docs": "مستندات",
       "nav-btn-download": "دانلود نسخه ویندوز",
       "hero-badge": "ابزار سبک، متن‌باز و 100% رایگان برای ویندوز",
-      "scroll-hint-down": "ادامه داره، اسکرول کن",
-      "scroll-hint-up": "برگرد بالا",
       "hero-title": "مدیریت هوشمند <span class=\"text-primary\">اولویت شبکه</span>",
       "hero-desc": "تعیین کنید سیستم شما اول از کدام کارت شبکه (کابل اترنت LAN، شبکه وای‌فای یا آداپتورهای مجازی) استفاده کند؛ تنها با کشیدن و رها کردن (Drag & Drop).",
-      "hero-os-support": "پشتیبانی کامل از Windows 8 / 10 / 11 و Windows Server 2012 به بالا",
+      "hero-os-support": "پشتیبانی کامل از Windows 8 / 10 / 11",
       "download-btn-title": "دانلود مستقیم برای ویندوز",
-      "download-btn-sub": "نسخه رسمی v1.0.0",
       "download-caption": "بدون نیاز به نصب (Portable) • بدون نیاز به پیش‌نیازهای سنگین سیستمی",
       "smartscreen-title": "نکته اجرای اولیه در ویندوز (SmartScreen):",
       "smartscreen-desc": "از آنجا که نرم‌افزار کاملاً رایگان و متن‌باز بوده و فاقد امضای دیجیتال تجاری شرکتی است، ممکن است پنجره اخطار اولیه ویندوز نمایش داده شود. در این صورت روی <span class=\"text-primary font-semibold\">More info</span> و سپس <span class=\"text-primary font-semibold\">Run anyway</span> کلیک فرمایید.",
@@ -582,13 +558,10 @@
       "nav-docs": "Documentation",
       "nav-btn-download": "Download for Windows",
       "hero-badge": "Lightweight, Open Source & 100% Free for Windows",
-      "scroll-hint-down": "Keep going, scroll down",
-      "scroll-hint-up": "Back to top",
       "hero-title": "Intelligent Network <span class=\"text-primary\">Priority Management</span>",
       "hero-desc": "Control which network card (Ethernet LAN, Wi-Fi, or Virtual adapters) your system uses first; simply by Drag & Drop.",
-      "hero-os-support": "Full support for Windows 8 / 10 / 11 & Windows Server 2012+",
+      "hero-os-support": "Full support for Windows 8 / 10 / 11",
       "download-btn-title": "Direct Download for Windows",
-      "download-btn-sub": "Official Release v1.0.0",
       "download-caption": "Portable (No installation required) • Zero heavy system dependencies",
       "smartscreen-title": "Windows SmartScreen notice:",
       "smartscreen-desc": "Because the tool is free and lacks a paid commercial digital signature, Windows may show a SmartScreen warning. Simply click <span class=\"text-primary font-semibold\">More info</span> and then <span class=\"text-primary font-semibold\">Run anyway</span>.",
@@ -706,43 +679,6 @@
 
     // Scroll progress indicator in the header
     const progressBar = document.getElementById('scroll-progress');
-    const scrollHint = document.getElementById('scroll-hint');
-    const scrollHintText = document.getElementById('scroll-hint-text');
-    const scrollHintArrowWrap = document.getElementById('scroll-hint-arrow-wrap');
-    const pageFooter = document.getElementById('page-footer');
-    let hintIsUp = false;
-
-    const setHintDirection = (isUp) => {
-      if (isUp === hintIsUp) return;
-      hintIsUp = isUp;
-      const key = hintIsUp ? 'scroll-hint-up' : 'scroll-hint-down';
-      if (scrollHintText) {
-        const dict = translations[currentLang];
-        scrollHintText.setAttribute('data-i18n', key);
-        scrollHintText.textContent = (dict && dict[key]) || key;
-      }
-      if (scrollHintArrowWrap) {
-        scrollHintArrowWrap.classList.toggle('is-up', hintIsUp);
-      }
-    };
-
-    if (scrollHint) {
-      scrollHint.addEventListener('click', () => {
-        window.scrollTo({
-          top: hintIsUp ? 0 : document.documentElement.scrollHeight,
-          behavior: 'smooth'
-        });
-      });
-    }
-
-    // Reliable bottom detection: watch the real footer instead of computing scrollHeight math,
-    // since snap sections / dvh / late-loading fonts can make that math a bit off.
-    if (pageFooter && scrollHint && 'IntersectionObserver' in window) {
-      const footerObserver = new IntersectionObserver((entries) => {
-        entries.forEach((entry) => setHintDirection(entry.isIntersecting));
-      }, { threshold: 0.4 });
-      footerObserver.observe(pageFooter);
-    }
 
     if (progressBar) {
       const updateProgress = () => {
