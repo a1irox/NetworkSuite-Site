@@ -82,8 +82,13 @@
       justify-content: center;
     }
     @media (max-width: 640px) {
+      html {
+        scroll-snap-type: none;
+      }
       .snap-section {
         min-height: auto;
+        scroll-snap-align: none;
+        scroll-margin-top: 0;
       }
     }
 </style>
